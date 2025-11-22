@@ -1,0 +1,36 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <title>Stripe In-Class Exercise</title>
+  <script src="https://js.stripe.com/v3/"></script>
+</head>
+<body>
+  <h1>Stripe Test Payment</h1>
+  <button id="pay-button">Pay $5</button>
+
+  <script>
+    const stripe = Stripe("pk_test_123_replace_me");
+
+    document.getElementById("pay-button").addEventListener("click", async () => {
+      const res = await fetch("/create-payment-intent", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+      });
+
+      const data = await res.json();
+
+      const result = await stripe.confirmCardPayment(data.clientSecret, {
+        payment_method: {
+          card: { token: "tok_visa" }
+        }
+      });
+
+      if (result.error) {
+        alert("Payment Failed");
+      } else {
+        alert("Payment Successful!");
+      }
+    });
+  </script>
+</body>
+</html>
