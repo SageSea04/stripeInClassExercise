@@ -1,27 +1,65 @@
-require('dotenv').config();
-const express = require('express');
-const path = require('path');
-const stripe = require('stripe')(process.env.STRIPE_SECRET_KEY);
+require("dotenv").config();
+const express = require("express");
+const path = require("path");
+const stripe = require("stripe")(process.env.STRIPE_SECRET_KEY);
 
 const app = express();
-app.use(express.static(path.join(__dirname, 'public')));
-app.use(express.json());
 
-// Create a Payment Intent for $5.00 (test mode)
-app.post('/create-payment-intent', async (req, res) => {
+// Middlewares
+app.use(express.json());
+app.use(express.static(path.join(__dirname, "public")));
+
+// In-memory log of payments for demo purposes
+const payments = [];
+
+/**
+ * POST /create-payment-intent
+ * Body: { amount: number }
+ * Returns: { clientSecret: string }
+ */
+app.post("/create-payment-intent", async (req, res) => {
   try {
+    let { amount } = req.body;
+
+    // Convert amount to integer (USD -> cents)
+    const intAmount = parseInt(amount);
+    if (!intAmount || intAmount <= 0) {
+      return res.status(400).send({ error: "Invalid amount" });
+    }
+
+    // Create Stripe Payment Intent
     const paymentIntent = await stripe.paymentIntents.create({
-      amount: 500, 
-      currency: 'usd',
-      payment_method_types: ['card']
+      amount: intAmount * 100, // amount in cents
+      currency: "usd",
     });
 
-    res.json({ clientSecret: paymentIntent.client_secret });
-  } catch (error) {
-    res.status(500).json({ error: error.message });
+    // Log the payment attempt
+    payments.push({
+      amount: intAmount,
+      status: "pending",
+      created: new Date(),
+    });
+    console.log(`[${new Date().toLocaleTimeString()}] Payment intent created for $${intAmount}`);
+
+    // Send client secret to frontend
+    res.send({
+      clientSecret: paymentIntent.client_secret,
+      amount: intAmount,
+      message: `Payment intent created for $${intAmount}`,
+    });
+  } catch (err) {
+    console.error(err);
+    res.status(500).send({ error: err.message });
   }
 });
 
-app.listen(3000, () => {
-  console.log('Server running at http://localhost:3000');
+// Optional: view demo payment log in browser (for instructor/demo)
+app.get("/payments", (req, res) => {
+  res.send(payments);
+});
+
+// Start server
+const PORT = process.env.PORT || 3000;
+app.listen(PORT, () => {
+  console.log(`Server running at http://localhost:${PORT}`);
 });

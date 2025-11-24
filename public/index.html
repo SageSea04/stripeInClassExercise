@@ -1,36 +1,59 @@
 <!DOCTYPE html>
-<html>
+<html lang="en">
 <head>
-  <title>Stripe In-Class Exercise</title>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Team Stripe In-Class Exercise</title>
+  <link rel="stylesheet" href="style.css">
   <script src="https://js.stripe.com/v3/"></script>
+  <script src="https://cdn.jsdelivr.net/npm/canvas-confetti@1.5.1/dist/confetti.browser.min.js"></script>
 </head>
 <body>
-  <h1>Stripe Test Payment</h1>
-  <button id="pay-button">Pay $5</button>
+  <div class="container">
+    <!-- Sidebar -->
+    <aside class="sidebar">
+      <h2>Team Stripe</h2>
+      <p id="sidebar-welcome">Welcome! Choose a section to get started.</p>
+      <ul>
+        <li class="active" data-section="welcome">Welcome</li>
+        <li data-section="plans">Select Plan</li>
+        <li data-section="payment">Make Payment</li>
+      </ul>
+    </aside>
 
-  <script>
-    const stripe = Stripe("pk_test_123_replace_me");
+    <!-- Main Content -->
+    <main class="main-content">
+      <!-- Welcome Section -->
+      <section id="welcome" class="content active">
+        <h1>Welcome to Our In-Class Stripe Exercise!</h1>
+        <p>Follow the sidebar to choose a plan and make a test payment.</p>
+      </section>
 
-    document.getElementById("pay-button").addEventListener("click", async () => {
-      const res = await fetch("/create-payment-intent", {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-      });
+      <!-- Plans Section -->
+      <section id="plans" class="content">
+        <h1>Select a Plan</h1>
+        <div class="plans">
+          <button class="plan active" data-amount="5">$5 Plan</button>
+          <button class="plan" data-amount="10">$10 Plan</button>
+          <button class="plan" data-amount="20">$20 Plan</button>
+        </div>
+      </section>
 
-      const data = await res.json();
+      <!-- Payment Section -->
+      <section id="payment" class="content">
+        <h1>Make Payment</h1>
+        <div class="payment-box">
+          <p>Selected Plan: <span id="selected-plan">$5</span></p>
+          <div id="card-element" style="margin-top:15px;"></div>
+          <button id="pay-button">Pay</button>
+          <div id="payment-message"></div>
+        </div>
+      </section>
+    </main>
+  </div>
+    <!-- Confetti Sound-->
+  <audio id="confetti-sound" src="confetti.mp3" preload="auto"></audio>
 
-      const result = await stripe.confirmCardPayment(data.clientSecret, {
-        payment_method: {
-          card: { token: "tok_visa" }
-        }
-      });
-
-      if (result.error) {
-        alert("Payment Failed");
-      } else {
-        alert("Payment Successful!");
-      }
-    });
-  </script>
+  <script src="frontend.js"></script>
 </body>
 </html>
