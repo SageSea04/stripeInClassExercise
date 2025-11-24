@@ -31,7 +31,7 @@ http://localhost:3000
 
 ## Usage
 - Use sidebar to navigate: **Welcome → Select Plan → Make Payment**  
-- Choose a plan ($5, $10, $20) 
+- Choose a plan ($5, $10, $20 or input custom amount) 
 - Test cards: `4242 4242 4242 4242`
               `4000 0566 5566 5556`
               `5555 5555 5555 4444`

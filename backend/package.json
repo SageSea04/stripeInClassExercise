@@ -1,15 +1,14 @@
 {
-  "name": "stripeinclassexercise",
+  "name": "demoapplication",
   "version": "1.0.0",
+  "description": "This is a simple Express + Stripe project used for an in-class activity.   Students will install dependencies, run a local server, and make a test payment using Stripe.",
   "main": "index.js",
   "scripts": {
-    "start": "node index.js",
     "test": "echo \"Error: no test specified\" && exit 1"
   },
   "keywords": [],
   "author": "",
   "license": "ISC",
-  "description": "",
   "dependencies": {
     "dotenv": "^17.2.3",
     "express": "^5.1.0",

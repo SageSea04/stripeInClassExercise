@@ -72,7 +72,9 @@ body {
   margin-top: 20px;
 }
 
-.plans button {
+/* Buttons & Custom Input Uniform Styling */
+.plans button,
+.plans input.plan {
   margin: 0 10px 10px 0;
   padding: 12px 25px;
   border: none;
@@ -80,12 +82,18 @@ body {
   cursor: pointer;
   background-color: #eee;
   transition: background 0.3s ease, transform 0.2s ease;
+  font-size: 16px;
+  text-align: center;
 }
 
-.plans button.active, .plans button:hover {
+.plans button.active,
+.plans button:hover,
+.plans input.plan.active,
+.plans input.plan:focus {
   background-color: #6772e5;
   color: white;
   transform: scale(1.05);
+  outline: none; 
 }
 
 /* Payment Box */
