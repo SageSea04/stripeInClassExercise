@@ -32,6 +32,13 @@ http://localhost:3000
 ## Usage
 - Use sidebar to navigate: **Welcome → Select Plan → Make Payment**  
 - Choose a plan ($5, $10, $20) 
-- Test cards: `4242 4242 4242 4242` (any future expiry & 3-digit CVC & ZIP)  
-- Payment success triggers confetti animation + optional sound/gif
+- Test cards: `4242 4242 4242 4242`
+              `4000 0566 5566 5556`
+              `5555 5555 5555 4444`
+              `2223 00312 2003 222`
+              `6011 0009 9013 9424`
+            (any future expiry & 3-digit CVC & ZIP)  
+- Any combination of numbers, dates, CVC, & ZIP codes can be used to test failed payments.
+- Payment success triggers confetti animation + sound + gif
+- Payment failed triggers only sound 
 
