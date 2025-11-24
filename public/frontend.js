@@ -18,7 +18,6 @@ sidebarItems.forEach(item => {
     sections.forEach(sec => sec.classList.remove("active"));
     document.getElementById(sectionToShow).classList.add("active");
 
-    // Update sidebar welcome message
     if(sectionToShow === "welcome") sidebarWelcome.textContent = "Welcome! Choose a section to get started.";
     if(sectionToShow === "plans") sidebarWelcome.textContent = "Select a plan that fits your test payment.";
     if(sectionToShow === "payment") sidebarWelcome.textContent = "Proceed with the selected plan to make a payment.";
@@ -29,13 +28,28 @@ sidebarItems.forEach(item => {
 let selectedAmount = 5;
 const selectedPlanSpan = document.getElementById("selected-plan");
 
+// Added custom amount input handling
+const customAmountInput = document.getElementById("custom-amount"); 
+customAmountInput.addEventListener("input", () => {
+  selectedAmount = parseInt(customAmountInput.value) || 0;
+  selectedPlanSpan.textContent = `$${selectedAmount}`;
+  document.querySelectorAll(".plan").forEach(btn => btn.classList.remove("active"));
+});
+
 document.querySelectorAll(".plan").forEach(button => {
   button.addEventListener("click", () => {
     document.querySelectorAll(".plan").forEach(btn => btn.classList.remove("active"));
     button.classList.add("active");
     selectedAmount = parseInt(button.dataset.amount);
     selectedPlanSpan.textContent = `$${selectedAmount}`;
+    customAmountInput.value = ""; // reset custom input
   });
+});
+
+customAmountInput.addEventListener("input", () => {
+  selectedAmount = parseInt(customAmountInput.value) || 0;
+  selectedPlanSpan.textContent = `$${selectedAmount}`;
+  document.querySelectorAll(".plan").forEach(btn => btn.classList.remove("active"));
 });
 
 // Sounds & GIF
@@ -72,9 +86,22 @@ payButton.addEventListener("click", async () => {
     if (result.error) {
       paymentMessage.textContent = "Payment failed: " + result.error.message;
       failSound.play();
+      // Update backend with fail
+      fetch("/update-payment-status", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ amount: selectedAmount, status: "failed" })
+      });
     } else if (result.paymentIntent.status === "succeeded") {
       paymentMessage.textContent = `Payment successful! Amount: $${selectedAmount}`;
       fireConfetti();
+      
+      // Update backend with success
+      fetch("/update-payment-status", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ amount: selectedAmount, status: "succeeded" })
+      });
     }
 
   } catch (err) {
@@ -87,21 +114,16 @@ payButton.addEventListener("click", async () => {
 
 // Confetti animation + GIF + sound
 function fireConfetti() {
-  // Play sound
   confettiSound.currentTime = 0;
   confettiSound.play();
-
-  // Show GIF
   confettiGif.style.display = "block";
 
-  // Trigger confetti
   confetti({
     particleCount: 100,
     spread: 70,
     origin: { y: 0.6 }
   });
 
-  // Hide GIF after 2.5 seconds
   setTimeout(() => {
     confettiGif.style.display = "none";
   }, 2500);

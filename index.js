@@ -12,11 +12,6 @@ app.use(express.static(path.join(__dirname, "public")));
 // In-memory log of payments for demo purposes
 const payments = [];
 
-/**
- * POST /create-payment-intent
- * Body: { amount: number }
- * Returns: { clientSecret: string }
- */
 app.post("/create-payment-intent", async (req, res) => {
   try {
     let { amount } = req.body;
@@ -36,16 +31,16 @@ app.post("/create-payment-intent", async (req, res) => {
     // Log the payment attempt
     payments.push({
       amount: intAmount,
-      status: "pending",
+      status: "processing", 
       created: new Date(),
     });
-    console.log(`[${new Date().toLocaleTimeString()}] Payment intent created for $${intAmount}`);
+    console.log(`[${new Date().toLocaleTimeString()}] Payment processing for $${intAmount}`); 
 
     // Send client secret to frontend
     res.send({
       clientSecret: paymentIntent.client_secret,
       amount: intAmount,
-      message: `Payment intent created for $${intAmount}`,
+      message: `Payment processing for $${intAmount}`,
     });
   } catch (err) {
     console.error(err);
@@ -53,7 +48,6 @@ app.post("/create-payment-intent", async (req, res) => {
   }
 });
 
-// Optional: view demo payment log in browser (for instructor/demo)
 app.get("/payments", (req, res) => {
   res.send(payments);
 });
