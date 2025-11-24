@@ -1,4 +1,5 @@
-const stripe = Stripe("pk_test_51SWmwLFuz7Ox4fG2xcLcnAPpQ386Xx0qH3ZgyJ8Ud71JzP2L9WgTpQXlBhHfMsfX35eqYhh0VtPQv0J1S9aDEeX100Wob0Zeus"); 
+// Initialize Stripe
+const stripe = Stripe("pk_test_51SWmwLFuz7Ox4fG2xcLcnAPpQ386Xx0qH3ZgyJ8Ud71JzP2L9WgTpQXlBhHfMsfX35eqYhh0VtPQv0J1S9aDEeX100Wob0Zeus");
 const elements = stripe.elements();
 const card = elements.create("card");
 card.mount("#card-element");
@@ -37,6 +38,11 @@ document.querySelectorAll(".plan").forEach(button => {
   });
 });
 
+// Sounds & GIF
+const confettiSound = document.getElementById("confetti-sound");
+const failSound = document.getElementById("fail-sound");
+const confettiGif = document.getElementById("confetti-gif");
+
 // Payment
 const payButton = document.getElementById("pay-button");
 const paymentMessage = document.getElementById("payment-message");
@@ -45,44 +51,58 @@ payButton.addEventListener("click", async () => {
   paymentMessage.textContent = "Processing payment...";
   payButton.disabled = true;
 
-  const response = await fetch("/create-payment-intent", {
-    method: "POST",
-    headers: { "Content-Type": "application/json" },
-    body: JSON.stringify({ amount: selectedAmount })
-  });
+  try {
+    const response = await fetch("/create-payment-intent", {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({ amount: selectedAmount })
+    });
 
-  const data = await response.json();
+    const data = await response.json();
 
-  if (data.error) {
-    paymentMessage.textContent = "Payment failed: " + data.error;
-    payButton.disabled = false;
-    return;
-  }
+    if (data.error) {
+      paymentMessage.textContent = "Payment failed: " + data.error;
+      failSound.play();
+      payButton.disabled = false;
+      return;
+    }
 
-  const result = await stripe.confirmCardPayment(data.clientSecret, { payment_method: { card } });
+    const result = await stripe.confirmCardPayment(data.clientSecret, { payment_method: { card } });
 
-  if (result.error) {
-    paymentMessage.textContent = "Payment failed: " + result.error.message;
-  } else if (result.paymentIntent.status === "succeeded") {
-    paymentMessage.textContent = `Payment successful! Amount: $${selectedAmount}`;
-    fireConfetti();
+    if (result.error) {
+      paymentMessage.textContent = "Payment failed: " + result.error.message;
+      failSound.play();
+    } else if (result.paymentIntent.status === "succeeded") {
+      paymentMessage.textContent = `Payment successful! Amount: $${selectedAmount}`;
+      fireConfetti();
+    }
+
+  } catch (err) {
+    paymentMessage.textContent = "Payment failed: " + err.message;
+    failSound.play();
   }
 
   payButton.disabled = false;
 });
 
-// Confetti animation
+// Confetti animation + GIF + sound
 function fireConfetti() {
-  // Play confetti sound
-  const sound = document.getElementById("confetti-sound");
-  sound.currentTime = 0; // reset to start
-  sound.play();
+  // Play sound
+  confettiSound.currentTime = 0;
+  confettiSound.play();
 
-  // Trigger confetti animation
+  // Show GIF
+  confettiGif.style.display = "block";
+
+  // Trigger confetti
   confetti({
     particleCount: 100,
     spread: 70,
     origin: { y: 0.6 }
   });
-}
 
+  // Hide GIF after 2.5 seconds
+  setTimeout(() => {
+    confettiGif.style.display = "none";
+  }, 2500);
+}

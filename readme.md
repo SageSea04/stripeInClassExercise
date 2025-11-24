@@ -29,5 +29,9 @@ Server runs at:
 
 http://localhost:3000
 
-## 6) 
+## Usage
+- Use sidebar to navigate: **Welcome → Select Plan → Make Payment**  
+- Choose a plan ($5, $10, $20) 
+- Test cards: `4242 4242 4242 4242` (any future expiry & 3-digit CVC & ZIP)  
+- Payment success triggers confetti animation + optional sound/gif
 
