@@ -8,7 +8,7 @@ Students will install dependencies, run a local server, and make a test payment 
 - Stripe test API keys (from https://dashboard.stripe.com/test/apikeys)
 
 ## 1) Clone this repository
-git clone <your-repo-url>
+git clone https://github.com/SageSea04/stripeInClassExercise
 
 ## 2) Open the folder in VS Code
 
@@ -42,3 +42,7 @@ http://localhost:3000
 - Payment success triggers confetti animation + sound + gif
 - Payment failed triggers only sound 
 
+## Optional VS Code Extensions
+- ESLint
+- Prettier
+- Node.js Extension Pack
