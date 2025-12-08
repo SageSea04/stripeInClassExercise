@@ -95,7 +95,6 @@ payButton.addEventListener("click", async () => {
     } else if (result.paymentIntent.status === "succeeded") {
       paymentMessage.textContent = `Payment successful! Amount: $${selectedAmount}`;
       fireConfetti();
-      
       // Update backend with success
       fetch("/update-payment-status", {
         method: "POST",
