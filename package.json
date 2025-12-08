@@ -3,10 +3,8 @@
   "version": "1.0.0",
   "description": "This is a simple Express + Stripe project used for an in-class activity.   Students will install dependencies, run a local server, and make a test payment using Stripe.",
   "main": "index.js",
-  "devDependencies": {},
   "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1",
-    "start": "npm start"
+    "test": "echo \"Error: no test specified\" && exit 1"
   },
   "keywords": [],
   "author": "",
