@@ -16,7 +16,7 @@ git clone https://github.com/SageSea04/stripeInClassExercise
 npm install
 
 ## 4) Create your environment file
-cp .env.example .env
+cp .env
 
 Edit `.env` and add your actual secret key:
 
